@@ -44,13 +44,15 @@ public class TBAPI {
     }
     
     
-    public func request<B:Encodable,R:Decodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, body: B? = nil, query: [URLQueryItem]? = nil) async throws -> R {
+    public func request<R:Decodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, query: [URLQueryItem]? = nil) async throws -> R {
+        let data: Data = try await request(method, url: url, headers: headers, bodyData: nil, query: query)
+        return try decoder.decode(R.self, from: data)
+    }
     
-        var bodyData: Data?
-        if let body = body {
-            bodyData = try encoder.encode(body)
-        }
-        
+    
+    public func request<B:Encodable,R:Decodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, body: B, query: [URLQueryItem]? = nil) async throws -> R {
+    
+        let bodyData = try encoder.encode(body)
         let data: Data = try await request(method, url: url, headers: headers, bodyData: bodyData, query: query)
         return try decoder.decode(R.self, from: data)
     }
