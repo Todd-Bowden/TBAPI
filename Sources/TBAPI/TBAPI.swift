@@ -13,6 +13,7 @@ public class TBAPI {
         case post = "POST"
     }
     
+    public init() { }
     
     public func request(_ method: Method = .get, url: String, headers: [String:String]? = nil, bodyData: Data? = nil, query: [URLQueryItem]? = nil) async throws -> (Data, URLResponse) {
         guard var url = URL(string: url) else {
