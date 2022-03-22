@@ -7,7 +7,7 @@ let package = Package(
     name: "TBAPI",
     platforms: [
         .macOS(.v12),
-        .iOS(.v14),
+        .iOS(.v15),
         .macCatalyst(.v15)
     ],
     products: [
