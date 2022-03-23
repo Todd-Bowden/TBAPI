@@ -29,9 +29,8 @@ public class TBAPI {
     }
     
     
-    public func request(_ method: Method = .get, url: String, headers: [String:String]? = nil, bodyData: Data? = nil, query: [URLQueryItem]? = nil) async throws -> Data {
+    public func data(_ method: Method = .get, url: String, headers: [String:String]? = nil, bodyData: Data? = nil, query: [URLQueryItem]? = nil) async throws -> Data {
         let (data, response) = try await request(method, url: url, headers: headers, bodyData: bodyData, query: query)
-        
         if let successResponseCode = successResponseCode {
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw Error.noResponseCode
@@ -43,18 +42,28 @@ public class TBAPI {
         return data
     }
     
-    
-    public func request<R:Decodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, query: [URLQueryItem]? = nil) async throws -> R {
-        let data: Data = try await request(method, url: url, headers: headers, bodyData: nil, query: query)
-        return try decoder.decode(R.self, from: data)
-    }
-    
-    
-    public func request<B:Encodable,R:Decodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, body: B, query: [URLQueryItem]? = nil) async throws -> R {
-    
+    public func data<B:Encodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, body: B, query: [URLQueryItem]? = nil) async throws -> Data {
         let bodyData = try encoder.encode(body)
-        let data: Data = try await request(method, url: url, headers: headers, bodyData: bodyData, query: query)
+        return try await data(method, url: url, headers: headers, bodyData: bodyData, query: query)
+    }
+    
+    public func data(_ method: Method = .get, url: String, headers: [String:String]? = nil, query: [URLQueryItem]? = nil) async throws -> Data {
+        return try await data(method, url: url, headers: headers, bodyData: nil, query: query)
+    }
+    
+    
+    public func object<R:Decodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, query: [URLQueryItem]? = nil) async throws -> R {
+        let data: Data = try await data(method, url: url, headers: headers, bodyData: nil, query: query)
         return try decoder.decode(R.self, from: data)
     }
+    
+    
+    public func object<B:Encodable,R:Decodable>(_ method: Method = .get, url: String, headers: [String:String]? = nil, body: B, query: [URLQueryItem]? = nil) async throws -> R {
+        let bodyData = try encoder.encode(body)
+        let data: Data = try await data(method, url: url, headers: headers, bodyData: bodyData, query: query)
+        return try decoder.decode(R.self, from: data)
+    }
+    
+
     
 }
