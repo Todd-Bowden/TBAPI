@@ -1,3 +1,3 @@
 # TBAPI
 
-A description of this package.
+Library for making API calls
