@@ -11,6 +11,7 @@ public class TBAPI {
     public enum Method: String {
         case get = "GET"
         case post = "POST"
+        case delete = "DELETE"
     }
     
     public init() { }
