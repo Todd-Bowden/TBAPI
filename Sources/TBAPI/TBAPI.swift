@@ -6,7 +6,7 @@ public class TBAPI {
     public var decoder = JSONDecoder()
     public var successResponseCode: Int? = 200
     
-    private let session = URLSession.shared
+    private var session = URLSession.shared
     
     public enum Method: String {
         case get = "GET"
@@ -14,7 +14,11 @@ public class TBAPI {
         case delete = "DELETE"
     }
     
-    public init() { }
+    public init() {
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 600
+        self.session = URLSession(configuration: configuration)
+    }
     
     public func request(_ method: Method = .get, url: String, headers: [String:String]? = nil, bodyData: Data? = nil, query: [URLQueryItem]? = nil) async throws -> (Data, URLResponse) {
         guard var url = URL(string: url) else {
